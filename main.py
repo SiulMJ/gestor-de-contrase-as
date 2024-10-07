@@ -42,32 +42,31 @@ def modificar():
         con.execute("UPDATE contraseñas SET usuario=?, contraseña=?, descripcion=? where id_contra =?", (usuario, contraseña, descripcion, id))
     actulist()
 
+def cerrar():
+    ventana.quit()
 
 def inicio():
 
     def igual():
         ventana2.destroy()
         ventana.deiconify()
+        
 
     ventana2 = tk.Tk()
     ventana2.title('gestor de contraseñas')
     ventana2.geometry('400x300')
+    login = ttk.Frame(ventana2, padding="20")
+    login.pack(expand=True)
+    ventana2.protocol("WM_DELETE_WINDOW", cerrar)
 
-    etiqueta = tk.Label(ventana2, text='ingrese su nombre:')
-    etiqueta.pack()
+    tk.Label(login, text='ingrese su nombre:').grid(row=0, column=0, pady=10, sticky="w")
+    nombre = ttk.Entry(login, width=30)
+    nombre.grid(row=0, column=1, pady=10)
 
-    nombre = ttk.Entry(ventana2, width=30)
-    nombre.pack()
-
-    etiqueta2 = tk.Label(ventana2, text='ingrese su contraseña:')
-    etiqueta2.pack()
-
-    contraseña = ttk.Entry(ventana2, width=30)
-    contraseña.pack()
-
-    ingresar = ttk.Button(ventana2, text="comprobar", command=igual)
-    ingresar.pack()
-
+    tk.Label(login, text='ingrese su contraseña: ').grid(row=1, column=0, pady=10, sticky="w")
+    contraseña = ttk.Entry(login, width=30, show="*")
+    contraseña.grid(row=1, column=1, pady=10)
+    ttk.Button(login, text="comprobar", command=igual).grid(row=2, column=1, pady=20)
     ventana2.mainloop()
 
 #ventana de la aplicacion
