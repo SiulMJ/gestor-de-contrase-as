@@ -43,10 +43,39 @@ def modificar():
     actulist()
 
 
+def inicio():
+
+    def igual():
+        ventana2.destroy()
+        ventana.deiconify()
+
+    ventana2 = tk.Tk()
+    ventana2.title('gestor de contraseñas')
+    ventana2.geometry('400x300')
+
+    etiqueta = tk.Label(ventana2, text='ingrese su nombre:')
+    etiqueta.pack()
+
+    nombre = ttk.Entry(ventana2, width=30)
+    nombre.pack()
+
+    etiqueta2 = tk.Label(ventana2, text='ingrese su contraseña:')
+    etiqueta2.pack()
+
+    contraseña = ttk.Entry(ventana2, width=30)
+    contraseña.pack()
+
+    ingresar = ttk.Button(ventana2, text="comprobar", command=igual)
+    ingresar.pack()
+
+    ventana2.mainloop()
+
 #ventana de la aplicacion
 ventana = tk.Tk()
 ventana.title("Gestor de contraseñas")
 ventana.geometry("599x300")
+
+ventana.withdraw()
 
 #frame text
 texto = ttk.Frame(ventana)
@@ -87,5 +116,4 @@ boton.pack(anchor='e', padx=10, pady=5)
 #mostrar la lista
 actulist()
 
-#fin del ciclo
-ventana.mainloop()
+inicio()
