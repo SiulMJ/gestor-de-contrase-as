@@ -1,4 +1,5 @@
-import tkinter as tk, tkinter.ttk as ttk
+import tkinter as tk
+from tkinter import ttk, messagebox
 import sqlite3    
 con = sqlite3.connect('contra.db')
 cur = con.cursor()
@@ -22,23 +23,6 @@ def actulist():
         lista.insert(tk.END, f"Usuario: {row[1]}, Contraseña: {row[2]}, Descripción: {row[3]}")
         id_map[i] = row[0]
 
-def registrar(ev):
-    registro = tk.Toplevel()
-    registro.geometry("400x200")
-    registro.title("registrar")
-    reg = ttk.Frame(registro, padding="20")
-    reg.pack(expand=True)
-    tk.Label(reg, text='ingrese su nombre:').grid(row=0, column=0, pady=10, sticky="w")
-    nombre = ttk.Entry(reg, width=30)
-    nombre.grid(row=0, column=1, pady=10)
-
-    tk.Label(reg, text='ingrese su contraseña: ').grid(row=1, column=0, pady=10, sticky="w")
-    contraseña = ttk.Entry(reg, width=30, show="*")
-    contraseña.grid(row=1, column=1, pady=10)
-
-    ttk.Button(reg, text="registrar", command="#").grid(row=2, column=0, columnspan=2, pady=20)
-
-
 def borrar():
     select = lista.curselection()
     if select:
@@ -59,15 +43,47 @@ def modificar():
         con.execute("UPDATE contraseñas SET pagina=?, contraseña=?, descripcion=? where id_contraseñas =?", (pagina, contraseña, descripcion, id))
     actulist()
 
+
+
 def cerrar():
     ventana.quit()
 
 def inicio():
 
     def igual():
+        nobu = nombre.get()
+        co = contraseña.get()
+        print(nobu)
+        print(co)
         ventana2.destroy()
         ventana.deiconify()
-        
+           
+    def registrar(ev):
+        registro = tk.Toplevel()
+        registro.geometry("400x200")
+        registro.title("registrar")
+        reg = ttk.Frame(registro, padding="20")
+        reg.pack(expand=True)
+        tk.Label(reg, text='ingrese su nombre:').grid(row=0, column=0, pady=10, sticky="w")
+        usuario = ttk.Entry(reg, width=30)
+        usuario.grid(row=0, column=1, pady=10)
+
+        tk.Label(reg, text='ingrese su contraseña: ').grid(row=1, column=0, pady=10, sticky="w")
+        contr = ttk.Entry(reg, width=30, show="*")
+        contr.grid(row=1, column=1, pady=10)
+
+        def insertusu():
+            nom = usuario.get().strip()
+            cont = contr.get().strip()
+            print(nom)
+            print(cont)
+            cur.execute("Insert INTO usuarios (nombre, contraseña) values (?, ?)", (nom,cont))
+            con.commit()
+
+        ttk.Button(reg, text="registrar", command=insertusu).grid(row=2, column=0, columnspan=2, pady=20)
+
+
+            
 
     ventana2 = tk.Tk()
     ventana2.title('gestor de contraseñas')
@@ -86,7 +102,7 @@ def inicio():
 
     ttk.Button(login, text="comprobar", command=igual).grid(row=2, column=0, columnspan=2, pady=20)
     
-    etiqueta = ttk.Label(login, text='¿Notienes usuario?')
+    etiqueta = ttk.Label(login, text='¿No tienes usuario?')
     etiqueta.grid(row=3, column=0, columnspan=2, pady=20)
     etiqueta.bind('<Button-1>', registrar)
 
