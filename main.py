@@ -53,11 +53,18 @@ def inicio():
     def igual():
         nobu = nombre.get()
         co = contraseña.get()
-        print(nobu)
-        print(co)
-        ventana2.destroy()
-        ventana.deiconify()
-           
+        sql = cur.execute(f"Select * From usuarios Where nombre = ? and contraseña = ?", (nobu, co))
+        result = sql.fetchone()
+        con.commit()
+        if result:
+            messagebox.showinfo("Atencion", "su registro fue exitoso")
+            ventana2.destroy()
+            ventana.deiconify()
+        else:
+            messagebox.showerror("Alerta", "la ventana se cerrara")
+            ventana2.destroy()
+
+
     def registrar(ev):
         registro = tk.Toplevel()
         registro.geometry("400x200")
@@ -75,10 +82,9 @@ def inicio():
         def insertusu():
             nom = usuario.get().strip()
             cont = contr.get().strip()
-            print(nom)
-            print(cont)
-            cur.execute("Insert INTO usuarios (nombre, contraseña) values (?, ?)", (nom,cont))
+            cur.execute("UPDATE usuarios SET nombre = ?, contraseña = ? WHERE id_usuarios = 1", (nom,cont))
             con.commit()
+            registro.destroy()
 
         ttk.Button(reg, text="registrar", command=insertusu).grid(row=2, column=0, columnspan=2, pady=20)
 
@@ -105,9 +111,6 @@ def inicio():
     etiqueta = ttk.Label(login, text='¿No tienes usuario?')
     etiqueta.grid(row=3, column=0, columnspan=2, pady=20)
     etiqueta.bind('<Button-1>', registrar)
-
-
-    
     ventana2.mainloop()
 
 #ventana de la aplicacion
