@@ -15,13 +15,14 @@ def insertar():
     actulist()
 
 def actulist():
-    lista.delete(0, tk.END)
+    for item in lista.get_children():
+        lista.delete(item)
     id_map.clear()
     cur.execute("SELECT id_contraseñas, pagina, contraseña, descripcion FROM contraseñas")
     con.commit()
-    for i, row in enumerate(cur.fetchall()):
-        lista.insert(tk.END, f"Usuario: {row[1]}, Contraseña: {row[2]}, Descripción: {row[3]}")
-        id_map[i] = row[0]
+    for  row in cur.fetchall():
+        lista.insert('',tk.END, id=row[0], values=(row[1], row[2], row[3]))
+        id_map[row[0]] = row[0]
 
 def borrar():
     select = lista.curselection()
@@ -42,8 +43,6 @@ def modificar():
         id = id_map[page]
         con.execute("UPDATE contraseñas SET pagina=?, contraseña=?, descripcion=? where id_contraseñas =?", (pagina, contraseña, descripcion, id))
     actulist()
-
-
 
 def cerrar():
     ventana.quit()
@@ -86,10 +85,7 @@ def inicio():
             con.commit()
             registro.destroy()
 
-        ttk.Button(reg, text="registrar", command=insertusu).grid(row=2, column=0, columnspan=2, pady=20)
-
-
-            
+        ttk.Button(reg, text="registrar", command=insertusu).grid(row=2, column=0, columnspan=2, pady=20)   
 
     ventana2 = tk.Tk()
     ventana2.title('gestor de contraseñas')
@@ -116,7 +112,7 @@ def inicio():
 #ventana de la aplicacion
 ventana = tk.Tk()
 ventana.title("Gestor de contraseñas")
-ventana.geometry("599x300")
+ventana.geometry("750x400")
 
 ventana.withdraw()
 
@@ -137,11 +133,23 @@ label_contra = ttk.Label(texto, text="Ingrese una Descripcion:")
 label_contra.pack(anchor='w', padx=5, pady=5)
 desc = ttk.Entry(texto)
 desc.pack(anchor='w',padx=5, pady=5)
+
 divlist = ttk.Frame(ventana)
 divlist.pack(side='left', fill='both', expand=True, padx=5, pady=5)
 
 # Lista de contraseñas
-lista = tk.Listbox(divlist)
+# lista = tk.Listbox(divlist)
+# lista.pack(fill='both', expand=True, padx=0.5, pady=0.5)\
+colum = ("paginas", "contraseñas", "descripcion")
+lista = ttk.Treeview(divlist, columns=colum, show='headings')
+
+for col in colum:
+    lista.heading(col, text=col)
+    lista.column(col, width=150, anchor='center')
+
+scrollbar = ttk.Scrollbar(divlist, orient=tk.VERTICAL, command=lista.yview)
+lista.config(yscroll=scrollbar.set)
+scrollbar.pack(side='left', fill='y')
 lista.pack(fill='both', expand=True, padx=0.5, pady=0.5)
 
 #frame botones
@@ -149,9 +157,9 @@ divbotones = ttk.Frame(ventana)
 divbotones.pack(side='right', fill='both', padx=10, pady=5)
 
 #botones de accion
-boton = ttk.Button(divbotones, text="Insertar", command= insertar)
+boton = ttk.Button(divbotones, text="Insertar", command = insertar)
 boton.pack(anchor='e', padx=10, pady=5)
-boton = ttk.Button(divbotones, text="Borrar", command= borrar)
+boton = ttk.Button(divbotones, text="Borrar", command = borrar)
 boton.pack(anchor='e', padx=10, pady=5)
 boton = ttk.Button(divbotones, text="Modificar", command= modificar)
 boton.pack(anchor='e', padx=10, pady=5)
