@@ -10,9 +10,20 @@ def insertar():
     pagina = pag.get()
     contraseña = contra.get()
     descripcion = desc.get()
-    cur.execute("Insert INTO contraseñas (pagina,contraseña,descripcion) values (?,?,?)",( pagina, contraseña, descripcion ))
-    con.commit()
-    actulist()
+    if pagina == '' :
+        messagebox.showerror('Error', "escribe una pagina")
+    elif contraseña == "":
+        messagebox.showerror('Error', "escribe una contraseña")
+    elif descripcion == "":
+        messagebox.showerror('Error', "escribe una descripcion")
+    else:
+        messagebox.showinfo('info', "se inserto contraseña")
+        cur.execute("Insert INTO contraseñas (pagina,contraseña,descripcion) values (?,?,?)",( pagina, contraseña, descripcion ))
+        con.commit()
+        actulist()
+        pag.delete(0, tk.END)
+        contra.delete(0, tk.END)
+        desc.delete(0, tk.END)
 
 def actulist():
     for item in lista.get_children():
@@ -25,24 +36,30 @@ def actulist():
         id_map[row[0]] = row[0]
 
 def borrar():
-    select = lista.curselection()
+    select = lista.selection()
     if select:
-        index = select[0]
-        item_id = id_map[index]
+        item_id = select[0]
         cur.execute("DELETE FROM contraseñas WHERE id_contraseñas=?", (item_id,))
         con.commit()
         actulist()
 
 def modificar():
-    pagina = pagina.get()
+    pagina = pag.get()
     contraseña = contra.get()
     descripcion = desc.get()
-    select = lista.curselection()
+    select = lista.selection()
     if select:
-        page = select[0]
-        id = id_map[page]
-        con.execute("UPDATE contraseñas SET pagina=?, contraseña=?, descripcion=? where id_contraseñas =?", (pagina, contraseña, descripcion, id))
-    actulist()
+        id = select[0]
+        if pagina == '' :
+            messagebox.showerror('Error', "escribe una pagina")
+        elif contraseña == "":
+            messagebox.showerror('Error', "escribe una contraseña")
+        elif descripcion == "":
+            messagebox.showerror('Error', "escribe una descripcion")
+        else:
+            messagebox.showinfo('info', "se modificaron los datos")
+            con.execute("UPDATE contraseñas SET pagina=?, contraseña=?, descripcion=? where id_contraseñas =?", (pagina, contraseña, descripcion, id))
+            actulist()
 
 def cerrar():
     ventana.quit()
@@ -104,7 +121,7 @@ def inicio():
 
     ttk.Button(login, text="comprobar", command=igual).grid(row=2, column=0, columnspan=2, pady=20)
     
-    etiqueta = ttk.Label(login, text='¿No tienes usuario?')
+    etiqueta = ttk.Label(login, text='¿No tienes usuario?, Haz click aqui')
     etiqueta.grid(row=3, column=0, columnspan=2, pady=20)
     etiqueta.bind('<Button-1>', registrar)
     ventana2.mainloop()
@@ -134,12 +151,21 @@ label_contra.pack(anchor='w', padx=5, pady=5)
 desc = ttk.Entry(texto)
 desc.pack(anchor='w',padx=5, pady=5)
 
+#frame botones
+divbotones = ttk.Frame(ventana)
+divbotones.pack(side='left', fill='both', padx=5, pady=20)
+
+#botones de accion
+boton = ttk.Button(divbotones, text="Insertar", command = insertar)
+boton.pack(padx=10, pady=5)
+boton = ttk.Button(divbotones, text="Borrar", command = borrar)
+boton.pack(padx=10, pady=5)
+boton = ttk.Button(divbotones, text="Modificar", command= modificar)
+boton.pack(padx=10, pady=5)
+
 divlist = ttk.Frame(ventana)
 divlist.pack(side='left', fill='both', expand=True, padx=5, pady=5)
 
-# Lista de contraseñas
-# lista = tk.Listbox(divlist)
-# lista.pack(fill='both', expand=True, padx=0.5, pady=0.5)\
 colum = ("paginas", "contraseñas", "descripcion")
 lista = ttk.Treeview(divlist, columns=colum, show='headings')
 
@@ -152,17 +178,6 @@ lista.config(yscroll=scrollbar.set)
 scrollbar.pack(side='left', fill='y')
 lista.pack(fill='both', expand=True, padx=0.5, pady=0.5)
 
-#frame botones
-divbotones = ttk.Frame(ventana)
-divbotones.pack(side='right', fill='both', padx=10, pady=5)
-
-#botones de accion
-boton = ttk.Button(divbotones, text="Insertar", command = insertar)
-boton.pack(anchor='e', padx=10, pady=5)
-boton = ttk.Button(divbotones, text="Borrar", command = borrar)
-boton.pack(anchor='e', padx=10, pady=5)
-boton = ttk.Button(divbotones, text="Modificar", command= modificar)
-boton.pack(anchor='e', padx=10, pady=5)
 
 #mostrar la lista
 actulist()
